@@ -1,0 +1,64 @@
+package co.crescendo.exam.service;
+
+import co.crescendo.exam.util.RestTemplateUtil;
+import co.crescendo.exam.service.response.BusinessReviewResponse;
+import co.crescendo.exam.service.response.BusinessReview;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+@Service
+public class PartnerYelpServiceImpl implements PartnerYelpService {
+
+    @Value("${yelp.base.path}")
+    private String yelpBasePath;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private RestTemplateUtil restTemplateUtil;
+
+    @Autowired
+    private DetectFacesGcsService detectFacesGcsService;
+
+    @Override
+    public List<BusinessReview> getBusinessReview(String businessId) {
+
+        HttpEntity request = new HttpEntity(restTemplateUtil.createRequestHeaders());
+        ResponseEntity<BusinessReviewResponse> response = restTemplate.exchange(yelpBasePath + "/v3/businesses/"+ businessId +"/reviews",
+                HttpMethod.GET,
+                request,
+                BusinessReviewResponse.class);
+
+        if(response.getBody() != null){
+            response.getBody().getReviews().forEach( review -> {
+                try {
+
+                    review.setFaceAnnotationResponse(this.detectFacesGcsService.detectFaces(review.getUser().getImageUrl(), 10));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            return response.getBody().getReviews();
+        }
+
+        return new ArrayList<>();
+    }
+}
