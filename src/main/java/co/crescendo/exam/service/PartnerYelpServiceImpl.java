@@ -11,16 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 @Service
 public class PartnerYelpServiceImpl implements PartnerYelpService {
@@ -41,10 +34,7 @@ public class PartnerYelpServiceImpl implements PartnerYelpService {
     public List<BusinessReview> getBusinessReview(String businessId) {
 
         HttpEntity request = new HttpEntity(restTemplateUtil.createRequestHeaders());
-        ResponseEntity<BusinessReviewResponse> response = restTemplate.exchange(yelpBasePath + "/v3/businesses/"+ businessId +"/reviews",
-                HttpMethod.GET,
-                request,
-                BusinessReviewResponse.class);
+        ResponseEntity<BusinessReviewResponse> response = restTemplate.exchange(yelpBasePath + "/v3/businesses/"+ businessId +"/reviews", HttpMethod.GET, request, BusinessReviewResponse.class);
 
         if(response.getBody() != null){
             response.getBody().getReviews().forEach( review -> {

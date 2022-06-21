@@ -2,10 +2,8 @@ package co.crescendo.exam.service.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.api.services.vision.v1.model.FaceAnnotation;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class BusinessReview {
 
@@ -19,7 +17,7 @@ public class BusinessReview {
     private LocalDateTime timeCreated;
     private User user;
 
-    private List<FaceAnnotation> faceAnnotationResponse;
+    private FaceAnnotationResponse faceAnnotationResponse;
 
     public String getId() {
         return id;
@@ -69,11 +67,11 @@ public class BusinessReview {
         this.user = user;
     }
 
-    public List<FaceAnnotation> getFaceAnnotationResponse() {
+    public FaceAnnotationResponse getFaceAnnotationResponse() {
         return faceAnnotationResponse;
     }
 
-    public void setFaceAnnotationResponse(List<FaceAnnotation> faceAnnotationResponse) {
+    public void setFaceAnnotationResponse(FaceAnnotationResponse faceAnnotationResponse) {
         this.faceAnnotationResponse = faceAnnotationResponse;
     }
 }
